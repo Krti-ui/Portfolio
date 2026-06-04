@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krti Koumar | Hardware & AI Engineer</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #1c1d20;
+            --text-color: #ffffff;
+            --accent-color: #455ce9;
+            --gray-color: #999999;
+            --border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+            transition: background-color 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        h1, h2, h3, .menu-link, .hero-title, .transition-text, .section-label, .detail-title {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        a { text-decoration: none; color: inherit; cursor: none; }
+
+        /* --- Intro Pre-loader Overlay --- */
+        .intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background-color: #000000; z-index: 100000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .intro-text-wrapper { display: flex; align-items: center; gap: 15px; }
+        .intro-dot {
+            width: 15px; height: 15px; background-color: white; border-radius: 50%;
+            animation: pulse 1s infinite alternate;
+        }
+        .intro-text { color: white; font-size: 4rem; font-weight: 500; font-family: 'Oswald', sans-serif; }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* --- Page Transition Overlay --- */
+        .transition-overlay {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 0%;
+            background-color: #000; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            pointer-events: none;
+        }
+        
+        .transition-text {
+            color: white; font-size: 6vw; opacity: 0; transform: translateY(50px);
+            font-weight: 500; text-align: center; padding: 0 20px;
+        }
+
+        /* --- Custom Cursor --- */
+        .cursor-dot {
+            position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+            background-color: white; border-radius: 50%; pointer-events: none; z-index: 9998;
+            transform: translate(-50%, -50%);
+        }
+        .cursor-outline {
+            position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%;
+            pointer-events: none; z-index: 9998; transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 30px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; mix-blend-mode: difference;
+        }
+        .logo { font-size: 1.5rem; font-weight: 500; color: white; letter-spacing: 1px; z-index: 1001; }
+        .logo span { color: var(--accent-color); }
+        
+        .nav-links { display: flex; gap: 40px; }
+        .nav-item { position: relative; font-weight: 500; color: white; overflow: hidden; font-size: 0.9rem; letter-spacing: 1px; cursor: pointer; }
+        .nav-item::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px;
+            background-color: white; transform: translateX(-101%); transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .nav-item:hover::after { transform: translateX(0); }
+
+        /* Hamburger Icon (Mobile) */
+        .hamburger { display: none; cursor: pointer; z-index: 1001; }
+        .bar { display: block; width: 25px; height: 2px; margin: 5px auto; transition: all 0.3s ease-in-out; background-color: white; }
+
+        /* --- MAIN WRAPPER --- */
+        #main-content { width: 100%; }
+
+        /* --- DETAIL VIEW --- */
+        #detail-view {
+            display: none; min-height: 100vh; padding: 150px 5vw; color: white; padding-top: 100px;
+        }
+        .detail-header { margin-bottom: 60px; }
+        .detail-category { font-size: 1rem; opacity: 0.7; margin-bottom: 10px; display: block; }
+        .detail-title { font-size: 6vw; line-height: 1; margin-bottom: 40px; }
+        .detail-content { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+        .detail-img { width: 100%; height: 50vh; object-fit: cover; border-radius: 10px; }
+        .detail-desc { font-size: 1.2rem; line-height: 1.6; }
+        
+        .back-btn {
+            position: fixed; bottom: 50px; left: 50px;
+            padding: 15px 30px; border: 1px solid rgba(255,255,255,0.3); border-radius: 50px;
+            text-transform: uppercase; font-size: 0.9rem; cursor: pointer; z-index: 101;
+            background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); transition: 0.3s;
+        }
+        .back-btn:hover { background: white; color: black; }
+
+        /* --- SEPARATOR --- */
+        hr { border: none; height: 1px; background-color: var(--border-color); margin: 0; width: 100%; }
+
+        /* --- SECTION 1: HERO WITH VIDEO --- */
+        .hero {
+            height: 100vh; width: 100%; position: relative;
+            display: flex; flex-direction: column; justify-content: center; padding: 0 5vw;
+            overflow: hidden;
+        }
+        
+        /* Earth Video Background Styling */
+        .video-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+        }
+        .video-container video {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .video-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.8)); z-index: 1;
+        }
+
+        .hero-content { z-index: 2; position: relative; }
+        .hero-title { font-size: 8vw; line-height: 0.9; font-weight: 600; margin-bottom: 20px; overflow: hidden; text-shadow: 0 10px 30px rgba(0,0,0,0.5); letter-spacing: -2px;}
+        .hero-title span { display: block; transform: translateY(100%); }
+        .hero-subtitle { font-size: 1.5rem; color: rgba(255,255,255,0.9); max-width: 700px; margin-top: 20px; font-weight: 300; }
+
+        .location-badge {
+            position: absolute; bottom: 50px; left: 50px; display: flex; align-items: center; gap: 15px;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); z-index: 2;
+        }
+        .location-icon { width: 30px; height: 30px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .location-text { font-size: 0.9rem; font-weight: 500; }
+        .location-text span { display: block; font-size: 0.7rem; color: rgba(255,255,255,0.6); }
+
+        /* PERFECTLY CENTERED SCROLL INDICATOR */
+        .scroll-indicator {
+            position: absolute; bottom: 50px; right: 50px; width: 120px; height: 120px;
+            display: grid; place-items: center; cursor: pointer; z-index: 10;
+        }
+        .scroll-text { width: 100%; height: 100%; animation: rotateText 15s linear infinite; position: absolute; top: 0; left: 0;}
+        .scroll-arrow { font-size: 1.5rem; color: white; position: absolute; z-index: 2; pointer-events: none; }
+        @keyframes rotateText { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- SECTIONS GENERAL --- */
+        section { padding: 120px 5vw; }
+        
+        /* --- SECTION 2: ABOUT (DESIGN IMPORTED FROM SCREENSHOT) --- */
+        #about { display: flex; align-items: flex-start; }
+        .about-left { width: 45%; position: relative; z-index: 2; }
+        .about-sticky { position: sticky; top: 150px; padding-right: 20px; }
+        
+        /* The Huge Typography Design */
+        .section-label { font-size: 1rem; color: var(--gray-color); margin-bottom: 10px; display: block; letter-spacing: 1px; }
+        .about-heading { 
+            font-size: 4vw; 
+            line-height: 0.85; 
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            font-weight: 600;
+            margin-top: 10px;
+        } 
+        
+        .about-right { width: 55%; padding-top: 40px; position: relative; z-index: 1; }
+        .about-text { font-size: 1.6rem; line-height: 1.5; color: #ccc; margin-bottom: 60px; font-weight: 300; }
+        
+        .txt-white { color: white; font-weight: 500; }
+        .txt-accent { color: var(--accent-color); font-weight: 500; }
+
+        .list-group { margin-bottom: 50px; }
+        .list-title { font-size: 1.4rem; color: white; margin-bottom: 25px; font-family: 'Oswald', sans-serif; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; display: block;}
+        .list-item { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--gray-color); font-size: 1.05rem; }
+        .list-item span:first-child { color: white; font-weight: 400; }
+
+        /* --- SECTION 3: EXPERIENCE --- */
+        .club-row {
+            display: grid; grid-template-columns: 1fr 2fr 1fr; padding: 60px 0; 
+            transition: all 0.4s ease; cursor: pointer;
+        }
+        .club-row:last-child { border-bottom: 1px solid var(--border-color); }
+        .club-row:hover { background-color: white; color: black; padding-left: 20px; padding-right: 20px; }
+        .club-row:hover .club-year { color: black; }
+        .club-row:hover .club-role { color: var(--accent-color); }
+        .club-year { font-size: 3rem; font-family: 'Oswald', sans-serif; opacity: 0.3; transition: opacity 0.4s; }
+        .club-info h3 { font-size: 2.2rem; margin-bottom: 5px; font-family: 'Oswald', sans-serif; }
+        .club-role { font-size: 1rem; color: var(--gray-color); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- SECTION 4: HIGHLIGHTS --- */
+        #highlights { position: relative; }
+        .project-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 50px 0; border-bottom: 1px solid var(--border-color);
+            transition: 0.3s; cursor: pointer;
+        }
+        .project-item:first-child { border-top: 1px solid var(--border-color); }
+        .project-item:hover { opacity: 0.5; padding-left: 20px; }
+        .project-title { font-size: 4.5vw; font-family: 'Oswald', sans-serif; color: white; }
+        .project-cats { font-size: 1rem; color: var(--gray-color); text-transform: uppercase; }
+
+        /* --- SECTION 5: CONTACT --- */
+        #contact { padding: 100px 5vw; background-color: var(--bg-color); }
+        .contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+        .contact-left h2 { font-size: 5vw; line-height: 1; margin-bottom: 40px; font-weight: 600; letter-spacing: -2px;}
+        .contact-info-item { margin-bottom: 40px; }
+        .contact-info-item h4 { color: var(--gray-color); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 8px; }
+        .contact-info-item p { font-size: 1.6rem; }
+        .contact-form .form-group { margin-bottom: 50px; position: relative; }
+        .contact-form label {
+            position: absolute; top: 0; left: 0; color: var(--gray-color); pointer-events: none; transition: 0.3s;
+        }
+        .contact-form input, .contact-form textarea {
+            width: 100%; background: transparent; border: none;
+            border-bottom: 1px solid var(--border-color); padding: 10px 0;
+            color: white; font-size: 1.2rem; font-family: 'Poppins', sans-serif;
+            outline: none; transition: border-color 0.3s;
+        }
+        .contact-form input:focus, .contact-form textarea:focus { border-color: var(--accent-color); }
+        .contact-form input:focus ~ label, .contact-form input:valid ~ label,
+        .contact-form textarea:focus ~ label, .contact-form textarea:valid ~ label {
+            top: -25px; font-size: 0.85rem; color: var(--accent-color);
+        }
+        
+        .btn-submit {
+            width: 180px; height: 180px; border-radius: 50%;
+            background-color: var(--accent-color); border: none;
+            color: white; font-size: 1.1rem; text-transform: uppercase;
+            cursor: pointer; transition: transform 0.3s; margin-top: 30px; font-weight: 600;
+        }
+        .btn-submit:hover { transform: scale(1.1); }
+
+        /* FOOTER & SHAKE ANIMATION */
+        footer { padding: 50px 5vw; display: flex; justify-content: space-between; color: var(--gray-color); align-items: center; border-top: 1px solid var(--border-color); }
+        .socials { display: flex; gap: 30px; }
+        .socials a { color: white; font-size: 1.5rem; text-decoration: none; display: inline-block; }
+        
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .socials a:hover {
+            color: var(--accent-color);
+            animation: shake 0.5s; 
+            animation-iteration-count: 1;
+        }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 768px) {
+            section { padding: 80px 20px; }
+            nav { padding: 20px 20px; }
+            
+            .hamburger { display: block; }
+            .hamburger.active .bar:nth-child(2) { opacity: 0; }
+            .hamburger.active .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+            .hamburger.active .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+            .nav-links {
+                position: fixed; left: 0; top: 0; width: 100%; height: 100vh;
+                background-color: #000; flex-direction: column;
+                align-items: center; justify-content: center; gap: 40px;
+                transform: translateX(100%); transition: transform 0.5s ease-in-out;
+                z-index: 1000;
+            }
+            .nav-links.active { transform: translateX(0); }
+            .nav-item { font-size: 2rem; }
+
+            .hero-title { font-size: 15vw; line-height: 1; }
+            .hero-subtitle { font-size: 1.1rem; max-width: 100%; }
+            .location-badge { bottom: 30px; left: 20px; padding: 8px 15px; }
+            .scroll-indicator { bottom: 30px; right: 20px; width: 90px; height: 90px; }
+
+            #about { flex-direction: column; }
+            .about-left, .about-right { width: 100%; }
+            .about-sticky { position: relative; top: 0; margin-bottom: 20px; }
+            .about-heading { font-size: 14vw; }
+            .about-text { font-size: 1.2rem; margin-bottom: 40px;}
+
+            .club-row { grid-template-columns: 1fr; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 40px 0;}
+            .club-year { font-size: 1.5rem; opacity: 0.7; }
+            .club-info h3 { font-size: 1.8rem; }
+            .project-title { font-size: 8vw; }
+            .project-item { padding: 40px 0; }
+
+            .contact-container { grid-template-columns: 1fr; gap: 50px; }
+            .contact-left h2 { font-size: 12vw; }
+            footer { flex-direction: column; gap: 20px; text-align: center; }
+            
+            .detail-content { grid-template-columns: 1fr; gap: 30px; }
+            .detail-img { height: 250px; margin-bottom: 10px; }
+            #detail-view { padding: 100px 20px; }
+            .detail-title { font-size: 12vw; }
+            
+            .cursor-dot, .cursor-outline { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="intro-overlay" id="intro-overlay">
+        <div class="intro-text-wrapper">
+            <div class="intro-dot"></div>
+            <h1 class="intro-text" id="intro-text">Hello</h1>
+        </div>
+    </div>
+
+    <div class="transition-overlay">
+        <div class="transition-text">Loading...</div>
+    </div>
+
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+
+    <nav>
+        <div class="logo">Krti Koumar<span>.</span></div>
+        <div class="hamburger">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <div class="nav-links">
+            <div class="nav-item scroll-link" data-target="#home" data-text="Home">Home</div>
+            <div class="nav-item scroll-link" data-target="#about" data-text="About">About</div>
+            <div class="nav-item scroll-link" data-target="#experience" data-text="Exp.">Experience</div>
+            <div class="nav-item scroll-link" data-target="#highlights" data-text="Work">Highlights</div>
+            <div class="nav-item scroll-link" data-target="#contact" data-text="Contact">Contact</div>
+        </div>
+    </nav>
+
+    <div id="detail-view">
+        <div class="back-btn" onclick="closeDetailView()">
+            <i class="fas fa-arrow-left"></i> Back
+        </div>
+        <div class="detail-header">
+            <span class="detail-category" id="dt-cat">Category</span>
+            <h1 class="detail-title" id="dt-title">Project Title</h1>
+        </div>
+        <div class="detail-content">
+            <div>
+                <img src="" id="dt-img" class="detail-img" alt="Project Image">
+            </div>
+            <div>
+                <p class="detail-desc" id="dt-desc">Description goes here.</p>
+                <div style="margin-top: 30px;">
+                    <h4 style="margin-bottom: 10px; font-family:'Oswald',sans-serif;">Role / Tech</h4>
+                    <p id="dt-role" style="color:#ccc;">Role Details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content">
+        
+        <section id="home" class="hero">
+            <div class="video-container">
+                <video autoplay loop muted playsinline>
+                    <source src="C:\Users\DELL\Downloads\Nyc Night.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay"></div>
+            </div>
+
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span>Hardware</span>
+                    <span>& AI Engineer</span>
+                </h1>
+                <p class="hero-subtitle">Electronics & Instrumentation Undergrad | Hardware Enthusiast | Entrepreneur. Bridging the gap between hardware architecture and intelligent software.</p>
+            </div>
+
+            <div class="location-badge">
+                <div class="location-icon">
+                    <i class="fas fa-globe-asia" style="color:white; font-size: 0.8rem;"></i>
+                </div>
+                <div class="location-text">
+                    <span>Located in</span>
+                    Puducherry, India
+                </div>
+            </div>
+
+            <div class="scroll-indicator" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">
+                <svg class="scroll-text" viewBox="0 0 100 100" width="100" height="100">
+                    <defs>
+                        <path id="circle" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" />
+                    </defs>
+                    <text font-size="15" fill="white">
+                        <textPath xlink:href="#circle">SCROLL DOWN • SCROLL DOWN •</textPath>
+                    </text>
+                </svg>
+                <div class="scroll-arrow"><i class="fas fa-arrow-down"></i></div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="about">
+            <div class="about-left">
+                <div class="about-sticky">
+                    <span class="section-label">01 / Biography</span>
+                    <h2 class="about-heading">Multidisciplinary<br>Mindset.</h2>
+                </div>
+            </div>
+            <div class="about-right">
+                <p class="about-text">
+                    I am an <span class="txt-white">Electronics & Instrumentation Undergrad</span> & <span class="txt-white">Hardware Enthusiast</span> with a passion for <span class="txt-accent">leadership</span> and innovative entrepreneurship. From designing autonomous space debris satellites to engineering surgical robotic arms, I believe in bridging the gap between hardware architecture and intelligent software.
+                </p>
+
+                <div class="list-group">
+                    <div class="list-title">Achievements & Awards</div>
+                    <div class="list-item"><span>2nd Place, Technovation 26 (Anna Univ)</span><span>AVARAD Rover</span></div>
+                    <div class="list-item"><span>3rd Place, Marinotex (AMET Univ)</span><span>Shore V1</span></div>
+                    <div class="list-item"><span>2nd Place, HacKit 4.0 (SVCE)</span><span>Space Debris Satellite</span></div>
+                    <div class="list-item"><span>National Finalist (Top 10)</span><span>FedEx Smart Challenge</span></div>
+                </div>
+
+                <div class="list-group">
+                    <div class="list-title">Certifications</div>
+                    <div class="list-item"><span>Intro to Robotics</span><span>NPTEL, IIT Kharagpur (Top 5%)</span></div>
+                    <div class="list-item"><span>100 Days of Code - Python Bootcamp</span><span>Udemy</span></div>
+                    <div class="list-item"><span>SQL & Python</span><span>HackerRank</span></div>
+                    <div class="list-item"><span>JavaScript Algorithms</span><span>freeCodeCamp</span></div>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="experience">
+            <span class="section-label" style="margin-bottom: 50px; display:block;">02 / Career Path</span>
+            <h2 style="font-size: 3rem; margin-bottom: 50px; padding-bottom:20px;">Experience & Leadership</h2>
+            
+            <div class="club-row" 
+                 data-title="Student Ambassador" 
+                 data-color="#2980B9" 
+                 data-cat="Leadership" 
+                 data-role="Students Council, PTU" 
+                 data-img="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?q=80&w=2070"
+                 data-desc="Acting as a bridge between the university administration and student body at Puducherry Technological University. Organizing technical workshops and supporting campus innovation culture.">
+                <div class="club-year">2025</div>
+                <div class="club-info">
+                    <h3>PTU Student Council</h3>
+                    <p class="club-role">Student Ambassador</p>
+                </div>
+                <div class="club-role">Leadership</div>
+            </div>
+            
+            <hr style="opacity: 0.3;"> 
+
+            <div class="club-row" 
+                 data-title="BatchBinder" 
+                 data-color="#D35400" 
+                 data-cat="Startup / Software" 
+                 data-role="Founder & Developer" 
+                 data-img="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070"
+                 data-desc="Built a collaborative academic notes platform serving 100+ active users. Developed a full-stack PWA with React, TypeScript, and Supabase featuring real-time sync, resulting in 40% higher daily active usage.">
+                <div class="club-year">2024</div>
+                <div class="club-info">
+                    <h3>BatchBinder</h3>
+                    <p class="club-role">Founder / Developer</p>
+                </div>
+                <div class="club-role">Software</div>
+            </div>
+
+            <hr style="opacity: 0.3;">
+
+            <div class="club-row" 
+                 data-title="Class Representative" 
+                 data-color="#27AE60" 
+                 data-cat="Administration" 
+                 data-role="Class Representative" 
+                 data-img="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084"
+                 data-desc="Managed academic schedules, coordinated logistics, and actively resolved issues for a cohort of 60+ students, ensuring smooth communication and operational flow.">
+                <div class="club-year">2024</div>
+                <div class="club-info">
+                    <h3>Class Representative</h3>
+                    <p class="club-role">Student Leadership</p>
+                </div>
+                <div class="club-role">Leadership</div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="highlights">
+            <span class="section-label" style="margin-bottom: 50px; display:block;">03 / Curated Innovations</span>
+            <h2 style="font-size: 3rem; margin-bottom: 50px; padding-bottom:20px;">Curated Innovations</h2>
+            
+            <div class="project-item" 
+                 data-title="AVARAD Rover" 
+                 data-color="#2C3E50" 
+                 data-cat="Robotics" 
+                 data-role="Hardware & Embedded" 
+                 data-img="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=2070"
+                 data-desc="Assistive 4WD rover designed for elderly mobility featuring an FPV gimbal, real-time face tracking via OpenCV on Raspberry Pi, and sensor fusion. Controlled via a custom WebSocket dashboard. Designed gimbal smoothing with velocity-based control and adaptive deadband for stable operation.">
+                <div class="project-title">AVARAD Rover</div>
+                <div class="project-cats">Python / OpenCV / Arduino</div>
+            </div>
+            
+            <div class="project-item" 
+                 data-title="ARIL-Surgical Robot" 
+                 data-color="#8E44AD" 
+                 data-cat="Healthcare Hardware" 
+                 data-role="Embedded Systems Engineer" 
+                 data-img="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070"
+                 data-desc="10-DOF robotic arm integrated with a VR headset and motion sensors to allow surgeons to operate remotely. Features a custom haptic feedback system for improved tactile response and precision. Built with Embedded C and IMUs.">
+                <div class="project-title">ARIL-Surgical Robot</div>
+                <div class="project-cats">Embedded C / VR / IMUs</div>
+            </div>
+
+            <div class="project-item" 
+                 data-title="Space Debris Satellite" 
+                 data-color="#2980B9" 
+                 data-cat="Aerospace AI" 
+                 data-role="AI Prototyping" 
+                 data-img="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2072"
+                 data-desc="Autonomous satellite system prototype built during a 24-hour hackathon. Utilized Coral Edge TPU and Raspberry Pi for on-device AI debris detection and trajectory planning. Featured custom solar tracking and autonomous thruster control mechanisms.">
+                <div class="project-title">Space Debris Satellite</div>
+                <div class="project-cats">Python / TF Lite / Hardware</div>
+            </div>
+
+            <div class="project-item" 
+                 data-title="Academia" 
+                 data-color="#16A085" 
+                 data-cat="Web Application" 
+                 data-role="Full-Stack Developer" 
+                 data-img="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070"
+                 data-desc="Student wellness and mental health support platform. Built an end-to-end secure web app focused on privacy, data protection and wellness tracking. Integrated resource management modules and wellness algorithms.">
+                <div class="project-title">Academia Platform</div>
+                <div class="project-cats">React / Node.js / MongoDB</div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="contact">
+            <div class="contact-container">
+                <div class="contact-left">
+                    <h2>Let's build the future.</h2>
+                    <div class="contact-info-item" style="margin-top: 50px;">
+                        <h4>Email</h4>
+                        <p>krtikoumar2@gmail.com</p>
+                    </div>
+                    <div class="contact-info-item">
+                        <h4>Phone</h4>
+                        <p>+91 7548878805</p>
+                    </div>
+                    <div class="contact-info-item">
+                        <h4>Location</h4>
+                        <p>Puducherry, India</p>
+                    </div>
+                </div>
+                <div class="contact-right">
+                    <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+                        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+                        
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" required>
+                            <label for="name">What's your name?</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" required>
+                            <label for="email">What's your email?</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="service" name="service" required>
+                            <label for="service">Topic (Hardware, AI, etc.)</label>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" rows="4" required></textarea>
+                            <label for="message">Your message...</label>
+                        </div>
+                        <button type="submit" class="btn-submit">Send it</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div>&copy; 2026 Krti Koumar</div>
+            <div class="socials">
+                <a href="https://github.com/Krti-ui" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://linkedin.com/in/krti-koumar" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:krtikoumar2@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <script>
+        // 1. Initialize Lenis (Bulletproof synchronization)
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            smooth: true,
+        });
+        
+        lenis.on('scroll', ScrollTrigger.update);
+
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+
+        gsap.ticker.lagSmoothing(0);
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // 2. Elements
+        const introOverlay = document.getElementById('intro-overlay');
+        const introText = document.getElementById('intro-text');
+        const overlay = document.querySelector('.transition-overlay');
+        const overlayText = document.querySelector('.transition-text');
+        const mainContent = document.getElementById('main-content');
+        const detailView = document.getElementById('detail-view');
+        
+        // Detail View Elements
+        const dtTitle = document.getElementById('dt-title');
+        const dtCat = document.getElementById('dt-cat');
+        const dtRole = document.getElementById('dt-role');
+        const dtDesc = document.getElementById('dt-desc');
+        const dtImg = document.getElementById('dt-img');
+
+        // 3. Intro Preloader Logic
+        const greetings = ["Hello", "Bonjour", "Hola", "Ciao", "Namaste", "Vanakkam", "こんにちは"];
+        let step = 0;
+        
+        lenis.stop(); // Stop scroll initially
+
+        const introInterval = setInterval(() => {
+            introText.innerText = greetings[step];
+            step++;
+            
+            if (step === greetings.length) {
+                clearInterval(introInterval);
+                
+                gsap.to(introOverlay, {
+                    yPercent: -100,
+                    duration: 1.2,
+                    ease: "power4.inOut",
+                    delay: 0.3, 
+                    onComplete: () => {
+                        introOverlay.style.display = "none";
+                        lenis.start(); 
+                        
+                        // Fire Hero Animations ONLY after curtain reveals
+                        gsap.to(".hero-title span", { 
+                            y: 0, 
+                            duration: 1.5, 
+                            stagger: 0.2, 
+                            ease: "power4.out" 
+                        });
+                        
+                        ScrollTrigger.refresh();
+                    }
+                });
+            }
+        }, 180);
+
+        // 4. Hamburger Logic
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            if (navLinks.classList.contains('active')) {
+                lenis.stop();
+            } else {
+                lenis.start();
+            }
+        });
+
+        // 5. Navigation Transition Logic
+        document.querySelectorAll('.scroll-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+                lenis.start();
+
+                const targetId = link.getAttribute('data-target');
+                const linkText = link.getAttribute('data-text');
+                
+                runTransition(linkText, () => {
+                    mainContent.style.display = 'block';
+                    detailView.style.display = 'none';
+                    document.body.style.backgroundColor = '#1c1d20'; 
+                    lenis.scrollTo(targetId, { immediate: true });
+                    ScrollTrigger.refresh();
+                });
+            });
+        });
+
+        // 6. SPA Transition Logic (Clicking projects/experience)
+        const interactables = document.querySelectorAll('.club-row, .project-item');
+        interactables.forEach(item => {
+            item.addEventListener('click', () => {
+                const data = {
+                    title: item.getAttribute('data-title'),
+                    color: item.getAttribute('data-color'),
+                    cat: item.getAttribute('data-cat'),
+                    role: item.getAttribute('data-role'),
+                    img: item.getAttribute('data-img'),
+                    desc: item.getAttribute('data-desc')
+                };
+
+                runTransition(data.title, () => {
+                    mainContent.style.display = 'none';
+                    detailView.style.display = 'block';
+                    
+                    dtTitle.innerText = data.title;
+                    dtCat.innerText = data.cat;
+                    dtRole.innerText = data.role;
+                    dtDesc.innerText = data.desc;
+                    dtImg.src = data.img;
+                    
+                    document.body.style.backgroundColor = data.color;
+                    lenis.scrollTo(0, { immediate: true }); 
+                    ScrollTrigger.refresh(); 
+                });
+            });
+        });
+
+        function closeDetailView() {
+            runTransition("Home", () => {
+                mainContent.style.display = 'block';
+                detailView.style.display = 'none';
+                document.body.style.backgroundColor = '#1c1d20';
+                ScrollTrigger.refresh();
+            });
+        }
+
+        // Master Transition Animation
+        function runTransition(text, callback) {
+            const tl = gsap.timeline();
+            tl.set(overlay, { bottom: 0, top: 'auto', height: '0%' })
+              .set(overlayText, { opacity: 0, y: 50, innerHTML: text })
+              .to(overlay, { height: '100%', duration: 0.8, ease: 'power4.inOut' })
+              .to(overlayText, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.2")
+              .add(() => { 
+                  if(callback) callback(); 
+              }, "+=0.2")
+              .to(overlayText, { opacity: 0, y: -50, duration: 0.4 }, "+=0.1")
+              .to(overlay, { height: '0%', top: 0, bottom: 'auto', duration: 0.8, ease: 'power4.inOut' });
+        }
+
+        // 7. Custom Cursor Logic
+        const cursorDot = document.querySelector('[data-cursor-dot]');
+        const cursorOutline = document.querySelector('[data-cursor-outline]');
+
+        window.addEventListener("mousemove", (e) => {
+            const posX = e.clientX; const posY = e.clientY;
+            cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
+            cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
+        });
+
+        const hoverElements = document.querySelectorAll('a, .nav-item, .club-row, .project-item, button, .scroll-indicator, .back-btn');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.transform = 'translate(-50%, -50%) scale(2.5)';
+                cursorOutline.style.backgroundColor = 'rgba(255,255,255,0.1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursorOutline.style.backgroundColor = 'transparent';
+            });
+        });
+
+        // 8. Animations on Scroll 
+        // Using autoAlpha guarantees elements do not stay blank, fixing the missing row bug permanently
+        gsap.fromTo(".about-text, .list-group, .skills-grid", 
+            { autoAlpha: 0, y: 50 },
+            { autoAlpha: 1, y: 0, duration: 1, stagger: 0.2, scrollTrigger: { trigger: "#about", start: "top 80%" } }
+        );
+        
+        gsap.fromTo(".club-row", 
+            { autoAlpha: 0, x: -50 },
+            { autoAlpha: 1, x: 0, duration: 0.8, stagger: 0.1, scrollTrigger: { trigger: "#experience", start: "top 80%" } }
+        );
+        
+        gsap.fromTo(".project-item", 
+            { autoAlpha: 0, y: 30 },
+            { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.1, scrollTrigger: { trigger: "#highlights", start: "top 80%" } }
+        );
+        
+        gsap.fromTo(".contact-container", 
+            { autoAlpha: 0, y: 50 },
+            { autoAlpha: 1, y: 0, duration: 1, scrollTrigger: { trigger: "#contact", start: "top 80%" } }
+        );
+
+    </script>
+</body>
+</html>
